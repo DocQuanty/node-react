@@ -28,6 +28,41 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("123");
 });
+app.post("/auth/login", async (req, res) => {
+  try {
+    // проверка по email, находим пользователя
+    const user = await UserModel.findOne({
+      email: req.body.email,
+    });
+    // Если пользователь не найден
+    if (!email) {
+      return req.status(404).json({
+        message: "Error authorization",
+      });
+    }
+    // проверка на валидность пароля, сравниваеться пароль с запроса с паролем из документа хеша
+    const isValidPass = await bcrypt.compare(
+      req.body.password,
+      user._doc.passwordHash
+    );
+    // Если пароль неверний возвращаем сообщение про неверность данних
+    if (!isValidPass) {
+      return req.status(404).json({
+        message: "Invalid password or login",
+      });
+    }
+    // проверка на валидные данные, создаем новый токен
+    const token = jwt.sign({ _id: user._id }, "secret123", {
+      expiresIn: "30d",
+    });
+    // вытаскиваем хешированый пароль из обьеката user._doc
+    const { passwordHash, ...userData } = user._doc;
+    // формируем ответ
+    res.status(200).json({ ...userData, token });
+  } catch (error) {
+    res.status(500).json({ message: "Problem with login" });
+  }
+});
 // проверка вторым параметром, если прошла успешно тогда выполняеться колбек
 app.post("/auth/registration", registerValidation, async (req, res) => {
   try {
@@ -41,13 +76,13 @@ app.post("/auth/registration", registerValidation, async (req, res) => {
 
     const salt = await bcrypt.genSalt(10);
     //   зашифрованый пароль котрый очень тяжело хакнуть
-    const passwordHash = await bcrypt.hash(UserPassword, salt);
+    const hash = await bcrypt.hash(UserPassword, salt);
 
     const doc = new UserModel({
       email: req.body.email,
       fullName: req.body.fullName,
       avatarUrl: req.body.avatarUrl,
-      passwordHash,
+      passwordHash: hash,
     });
     // зашифровуєм с помощью JWT наш Id
     const token = jwt.sign(
@@ -60,12 +95,14 @@ app.post("/auth/registration", registerValidation, async (req, res) => {
     );
     //   сохраняем user в бд
     const user = await doc.save();
+    // вытаскиваем значение passwordHash из обьекта и не передаем его в ответ json
+    const { passwordHash, ...userData } = user._doc;
     //   возвращаем ответ котрый должен быть один(user обьект хранит в себе намного больший обьект потому разворачиваем его полглст'ю)
-    res.json({ ...user, token });
+    res.status(201).json({ ...userData, token });
   } catch (error) {
     console.log(error);
     res.status(500).json({
-      message: "Something went wrong!",
+      message: "Problem with registration",
     });
   }
 });
