@@ -5,6 +5,7 @@ import { registerValidation } from "./validation/auth.js";
 import { validationResult } from "express-validator";
 import bcrypt from "bcrypt";
 import UserModel from "./models/User.js";
+import chekAuth from "./utils/chekAuth.js";
 const PORT = 3000;
 // ======connect DB
 const userDB = "Kostya";
@@ -28,6 +29,7 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("123");
 });
+// авторизация
 app.post("/auth/login", async (req, res) => {
   try {
     // проверка по email, находим пользователя
@@ -36,7 +38,7 @@ app.post("/auth/login", async (req, res) => {
     });
     // Если пользователь не найден
     if (!user) {
-      return req.status(404).json({
+      return res.status(404).json({
         message: "Error authorization",
       });
     }
@@ -47,7 +49,7 @@ app.post("/auth/login", async (req, res) => {
     );
     // Если пароль неверний возвращаем сообщение про неверность данних
     if (!isValidPass) {
-      return req.status(404).json({
+      return res.status(404).json({
         message: "Invalid password or login",
       });
     }
@@ -63,7 +65,7 @@ app.post("/auth/login", async (req, res) => {
     res.status(500).json({ message: "Problem with login" });
   }
 });
-// проверка вторым параметром, если прошла успешно тогда выполняеться колбек
+//регистрация- проверка вторым параметром, если прошла успешно тогда выполняеться колбек
 app.post("/auth/registration", registerValidation, async (req, res) => {
   try {
     const error = validationResult(req);
@@ -105,6 +107,14 @@ app.post("/auth/registration", registerValidation, async (req, res) => {
       message: "Problem with registration",
     });
   }
+});
+
+app.get("/auth/info", chekAuth, (req, res) => {
+  try {
+    res.json({
+      success: true,
+    });
+  } catch (error) {}
 });
 
 app.get("/test", (req, res) => {});
