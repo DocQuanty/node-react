@@ -35,7 +35,7 @@ app.post("/auth/login", async (req, res) => {
       email: req.body.email,
     });
     // Если пользователь не найден
-    if (!email) {
+    if (!user) {
       return req.status(404).json({
         message: "Error authorization",
       });
