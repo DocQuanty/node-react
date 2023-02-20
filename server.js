@@ -6,6 +6,7 @@ import { validationResult } from "express-validator";
 import bcrypt from "bcrypt";
 import UserModel from "./models/User.js";
 import chekAuth from "./utils/chekAuth.js";
+
 const PORT = 3000;
 // ======connect DB
 const userDB = "Kostya";
@@ -109,12 +110,24 @@ app.post("/auth/registration", registerValidation, async (req, res) => {
   }
 });
 
-app.get("/auth/info", chekAuth, (req, res) => {
+// до авторизации передаем функцию проверку chekAuth которая обьязательно должна вернуть next , проверка на авторизацию
+app.get("/auth/info", chekAuth, async (req, res) => {
   try {
+    const user = await UserModel.findById(req.userId);
+    if (!user) {
+      return res.send({
+        message: "User not found!",
+      });
+    } else {
+      const { passwordHash, ...userData } = user._doc;
+      res.json;
+    }
+  } catch (e) {
+    console.log(e);
     res.json({
-      success: true,
+      message: "Somthing went wrong!",
     });
-  } catch (error) {}
+  }
 });
 
 app.get("/test", (req, res) => {});
