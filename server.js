@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { registerValidation, loginValidation } from "./validation.js";
 import chekAuth from "./utils/chekAuth.js";
 import * as userController from "./controllers/UserController.js";
+import * as PostController from "./controllers/PostController.js";
 
 const PORT = 3000;
 // ======connect DB
@@ -22,7 +23,6 @@ mongoose
 const app = express();
 // ====middleware====
 app.use(express.json());
-
 // ======routes======
 app.get("/", (req, res) => {
   res.send("123");
@@ -33,6 +33,9 @@ app.post("/auth/login", userController.login);
 app.post("/auth/registration", registerValidation, userController.registration);
 // до авторизации передаем функцию проверку chekAuth которая обьязательно должна вернуть next , проверка на авторизацию
 app.get("/auth/info", chekAuth, userController.getInfo);
+// =======POST=======
+
+app.post("/posts", PostController.create);
 
 app.listen(PORT, () => {
   console.log(`SERVER START AND WORK AT ${PORT} PORT`);

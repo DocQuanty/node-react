@@ -18,3 +18,11 @@ export const loginValidation = [
     min: 6,
   }),
 ];
+
+export const postCreateValidation = [
+  // проверки на подлиность данных
+  body("title", "Pls write a title of post!").isLength({ min: 3 }).isString(),
+  body("text", "Pls write the text of post!").isLength({ min: 5 }).isString(),
+  body("tags", "Invalid tag array specify !(an array)").optional().isString(),
+  body("imageURL", "Invalid link on image").optional().isString(),
+];
