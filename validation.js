@@ -10,3 +10,11 @@ export const registerValidation = [
   //   опционально, проверка на ссылку
   body("avatarUrl", "Please write the link of img").optional().isURL(),
 ];
+
+export const loginValidation = [
+  // проверки на подлиность данных
+  body("email", "Invalid email").isEmail().normalizeEmail(),
+  body("password", "The name must consist of 5 characters").isLength({
+    min: 6,
+  }),
+];

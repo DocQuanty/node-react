@@ -1,6 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
-import { registerValidation } from "./validation/auth.js";
+import { registerValidation, loginValidation } from "./validation.js";
 import chekAuth from "./utils/chekAuth.js";
 import * as userController from "./controllers/UserController.js";
 
@@ -24,6 +24,9 @@ const app = express();
 app.use(express.json());
 
 // ======routes======
+app.get("/", (req, res) => {
+  res.send("123");
+});
 // авторизация
 app.post("/auth/login", userController.login);
 //регистрация- проверка вторым параметром, если прошла успешно тогда выполняеться колбек
