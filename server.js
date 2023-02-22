@@ -1,6 +1,10 @@
 import express from "express";
 import mongoose from "mongoose";
-import { registerValidation, loginValidation } from "./validation.js";
+import {
+  registerValidation,
+  loginValidation,
+  postCreateValidation,
+} from "./validation.js";
 import chekAuth from "./utils/chekAuth.js";
 import * as userController from "./controllers/UserController.js";
 import * as PostController from "./controllers/PostController.js";
@@ -35,7 +39,13 @@ app.post("/auth/registration", registerValidation, userController.registration);
 app.get("/auth/info", chekAuth, userController.getInfo);
 // =======POST=======
 
-app.post("/posts", PostController.create);
+// CRUD operations
+// операции выполняються по очереди один за одиним
+app.post("/posts", chekAuth, postCreateValidation, PostController.create);
+// app.post("/posts/:id", PostController.create);
+// app.post("/posts", PostController.create);
+// app.post("/posts", PostController.create);
+// app.post("/posts", PostController.create);
 
 app.listen(PORT, () => {
   console.log(`SERVER START AND WORK AT ${PORT} PORT`);
