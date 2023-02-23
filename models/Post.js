@@ -12,9 +12,9 @@ const PostScheme = new mongoose.Schema(
       unique: true,
     },
     tags: {
+      //опциональны
       type: Array,
-      require: true,
-      unique: true,
+      default: [],
     },
     imageUrl: {
       type: String,
@@ -27,8 +27,8 @@ const PostScheme = new mongoose.Schema(
     user: {
       // в базе данних есть специальная айдишка которую и указываем
       type: mongoose.Schema.Types.ObjectId,
-      // своййство юзхер будет ссылаться на отдельную модель
-      ref: "User",
+      // своййство юзхер будет ссылаться на отдельную модель releshion ship
+      ref: "Users",
       required: true,
     },
     imageUrl: String,

@@ -20,7 +20,7 @@ export const loginValidation = [
 ];
 
 export const postCreateValidation = [
-  // проверки на подлиность данных
+  // проверки на подлиность данных, по сути тут просиходит валидация данних
   body("title", "Pls write a title of post!").isLength({ min: 3 }).isString(),
   body("text", "Pls write the text of post!").isLength({ min: 5 }).isString(),
   body("tags", "Invalid tag array specify !(an array)").optional().isString(),

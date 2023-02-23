@@ -42,8 +42,8 @@ app.get("/auth/info", chekAuth, userController.getInfo);
 // CRUD operations
 // операции выполняються по очереди один за одиним
 app.post("/posts", chekAuth, postCreateValidation, PostController.create);
-// app.post("/posts/:id", PostController.create);
-// app.post("/posts", PostController.create);
+app.get("/post/:id", PostController.getOnePost);
+app.get("/posts", PostController.getAll);
 // app.post("/posts", PostController.create);
 // app.post("/posts", PostController.create);
 
