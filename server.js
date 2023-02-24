@@ -41,10 +41,14 @@ app.get("/auth/info", chekAuth, userController.getInfo);
 
 // CRUD operations
 // операции выполняються по очереди один за одиним
-app.post("/posts", chekAuth, postCreateValidation, PostController.create);
+// chekAuth - проверка на авторизацию
+// postCreateValidation - проверка на валидацию
 app.get("/post/:id", PostController.getOnePost);
-app.get("/posts", PostController.getAll);
-// app.post("/posts", PostController.create);
+app.get("/posts", PostController.getAllPosts);
+app.post("/posts", chekAuth, postCreateValidation, PostController.createPost);
+app.delete("/post/:id", chekAuth, PostController.deletePost);
+// patch для обновления
+app.patch("/post/:id", chekAuth, PostController.updatePost);
 // app.post("/posts", PostController.create);
 
 app.listen(PORT, () => {
