@@ -112,7 +112,7 @@ export const createPost = async (req, res) => {
 export const updatePost = async (req, res) => {
   try {
     const postId = req.params.id;
-    const doc = PostModel.updateOne(
+    await PostModel.updateOne(
       // находит по первому параметру
       {
         _id: postId,
