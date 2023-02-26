@@ -7,10 +7,9 @@ import {
   loginValidation,
   postCreateValidation,
 } from "./validation.js";
-import chekAuth from "./utils/chekAuth.js";
-import * as userController from "./controllers/UserController.js";
-import * as PostController from "./controllers/PostController.js";
-import handleValidationErrors from "./utils/handleValidationErrors.js";
+
+import { handleValidationErrors, chekAuth } from "./utils/index.js";
+import { UserController, PostController } from "./controllers/index.js";
 
 const PORT = 3000;
 // ======connect DB
@@ -27,7 +26,7 @@ mongoose
     console.log(err);
   });
 // ======multer======
-// создаем хранилище destination для загрузки картинки
+// создаем хранилище destination для загрузки картинки multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "./uploads");
@@ -47,7 +46,7 @@ app.use("/uploads", express.static("uploads"));
 app.get("/", (req, res) => {
   res.send("123");
 });
-// загрузка картинки
+// загрузка картинки с помощью multer
 app.post("/uploads", chekAuth, uploads.single("image"), (req, res) => {
   res.json({
     url: `/uploads/${req.file.originalname}`,
@@ -58,22 +57,22 @@ app.post(
   "/auth/login",
   loginValidation,
   handleValidationErrors,
-  userController.login
+  UserController.login
 );
 //регистрация- проверка вторым параметром, если прошла успешно тогда выполняеться колбек
 app.post(
   "/auth/registration",
   registerValidation,
   handleValidationErrors,
-  userController.registration
+  UserController.registration
 );
 // до авторизации передаем функцию проверку chekAuth которая обьязательно должна вернуть next , проверка на авторизацию
-app.get("/auth/info", chekAuth, userController.getInfo);
+app.get("/auth/info", chekAuth, UserController.getInfo);
 // ===CRUD operations===
 // операции выполняються по очереди один за одиним
 // chekAuth - проверка на авторизацию
 // postCreateValidation - проверка на валидацию
-app.get("/post/:id", PostController.getOnePost);
+app.get("/post/:id", handleValidationErrors, PostController.getOnePost);
 app.get("/posts", PostController.getAllPosts);
 // защищенные роуты
 app.post("/posts", chekAuth, postCreateValidation, PostController.createPost);

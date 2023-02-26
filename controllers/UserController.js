@@ -41,11 +41,6 @@ export const login = async (req, res) => {
 
 export const registration = async (req, res) => {
   try {
-    const error = validationResult(req);
-    if (!error.isEmpty()) {
-      // при ошибке вернет масив с обьектом про ошибку
-      return res.status(400).json(error.array());
-    }
     // получение пароля
     const UserPassword = req.body.password;
 
